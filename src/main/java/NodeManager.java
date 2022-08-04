@@ -1,4 +1,7 @@
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class NodeManager {
 
@@ -70,4 +73,47 @@ public class NodeManager {
                 compareResult < 0 ? Direction.LEFT :
                         Direction.EQUAL;
     }
+
+    public Node get(Integer value) {
+        if (root == null) {
+            throw new NoSuchElementException();
+        }
+        return getInner(value, root);
+    }
+
+    private Node getInner(Integer value, Node root) {
+        Direction direction = getDirection(value, root);
+        switch (direction) {
+            case LEFT: {
+                if (root.getLeft() == null) {
+                    throw new NoSuchElementException();
+                }
+                return getInner(value, root.getLeft());
+            }
+            case RIGHT: {
+                if (root.getRight() == null) {
+                    throw new NoSuchElementException();
+                }
+                return getInner(value, root.getRight());
+            }
+            default: return root;
+        }
+    }
+
+    public List<Integer> getGreaterThen (Integer value) {
+        return getGreaterNext(value, root);
+    }
+
+    private List<Integer> getGreaterNext(Integer value, Node node ) {
+        List<Integer> list = new ArrayList<>();
+        if (node.getLeft() != null && node.getLeft().getValue() > value){
+            list.addAll(getGreaterNext(value, node.getLeft()));
+        }
+        if (node.getRight() != null && node.getRight().getValue() > value){
+            list.addAll(getGreaterNext(value, node.getRight()));
+        }
+        list.add(node.getValue());
+        return list;
+    }
+
 }
